@@ -1,0 +1,20 @@
+activity_label = activity_label txt file
+activityName = V2 from activity_label
+activityID = V1 from activity_label
+features = features txt file
+x_test =  X_test txt file
+y_test =  Y_test txt file
+subject_test =  subject_test txt file
+test_df = merged x, y, and subject test dataframes
+x_train  =  X_train txt file
+y_train =  Y_train txt file
+subject_train =  subject_train txt file
+train_df = merged x, y, and subject train dataframes
+complete_df = merged train and test dataframes
+names = colnames of complete_df
+std_mean_rep = dataframe with lines of code that contain activityID, subjectID, mean, and std
+mean_std_data = dataframe subset of complete_df that contains the mean and std
+w_name_mean_std = merged dataset that pairs activity ids with activity names
+tidy_set = tidy data set grouped by subjectID, activityName, and activityID that has the mean function applied to the entire dataframe
+FinalData.txt = name of txt file to be uploaded 
+
