@@ -1,0 +1,60 @@
+#Labels for activity data and features
+activity_label <- read.table("/Users/alexiscarey/OneDrive - Johns Hopkins/Thesis Project/R projects/UCI HAR Dataset/activity_labels.txt")
+activity_label <- activity_label %>% 
+  rename(activityName = V2,
+         activityID = V1)
+features<- read.table("/Users/alexiscarey/OneDrive - Johns Hopkins/Thesis Project/R projects/UCI HAR Dataset/features.txt")
+
+#Test Set
+x_test <- read.table("/Users/alexiscarey/OneDrive - Johns Hopkins/Thesis Project/R projects/UCI HAR Dataset/test/X_test.txt")
+y_test <- read.table("/Users/alexiscarey/OneDrive - Johns Hopkins/Thesis Project/R projects/UCI HAR Dataset/test/Y_test.txt")
+subject_test <- read.table("/Users/alexiscarey/OneDrive - Johns Hopkins/Thesis Project/R projects/UCI HAR Dataset/test/subject_test.txt")
+
+#Changing names of column
+colnames(x_test) = features[,2]
+colnames(y_test) = "activityID"
+subject_test <- subject_test %>%
+  rename(subjectID = V1)
+
+#Merge all test data
+test_df <- cbind(x_test, y_test, subject_test)
+
+#Train Set
+x_train <- read.table("/Users/alexiscarey/OneDrive - Johns Hopkins/Thesis Project/R projects/UCI HAR Dataset/train/X_train.txt")
+y_train <- read.table("/Users/alexiscarey/OneDrive - Johns Hopkins/Thesis Project/R projects/UCI HAR Dataset/train/Y_train.txt")
+subject_train <- read.table("/Users/alexiscarey/OneDrive - Johns Hopkins/Thesis Project/R projects/UCI HAR Dataset/train/subject_train.txt")
+
+#Changing names of column
+colnames(x_train) = features[,2] #names columns of x
+colnames(y_train) = "activityID" #names columns of y
+subject_train <- subject_train %>%
+  rename( subjectID = V1)
+
+#Merge all train data
+train_df <- cbind(x_train, y_train, subject_train)
+
+#Merge test and train data sets
+complete_df <- rbind(test_df,train_df)
+head(complete_df, 3)
+
+#Collect the column names from the merged data set
+names <- colnames(complete_df) 
+
+#used to find mean or std in column names from dataset
+std_mean_rep <-( grepl("subjectID", names) |
+                   grepl("activityID", names) |
+                   grepl("mean..", names) |
+                  grepl("std..", names)
+                  )
+mean_std_data <- complete_df[ , std_mean_rep == T]
+
+#merging datasets to give names to activity ids
+w_name_mean_std <- merge(mean_std_data, activity_label, by ="activityID", all = T )
+
+#To create a new tidy data set
+tidy_set <- w_name_mean_std %>%
+  group_by(subjectID, activityName, activityID) %>%
+  summarise_all(funs(mean))
+
+#To create a new txt file to upload
+write.table(tidy_set, "FinalData.txt", row.name=FALSE)
